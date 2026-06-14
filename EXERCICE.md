@@ -21,8 +21,8 @@ Infrastructure disponible dans le DevContainer :
 - API locale : `http://localhost:3000`
 - Verdaccio : `http://localhost:4873`
 - Docker Registry : `http://localhost:5000`
-- Cible SSH npm : `deployer@localhost:2222`, application exposee sur `3001`
-- Cible SSH Docker : `deployer@localhost:2223`, application exposee sur `3002`
+- Cible SSH npm : `tp-cd-deployment-npm`, application exposee sur `3001`
+- Cible SSH Docker : `tp-cd-deployment-docker`, application exposee sur `3002`
 - Execution locale GitHub Actions : `act`
 
 Avant de commencer :
@@ -30,8 +30,8 @@ Avant de commencer :
 ```bash
 curl http://localhost:4873/-/ping
 curl http://localhost:5000/v2/
-ssh -p 2222 deployer@localhost "echo ok"
-ssh -p 2223 deployer@localhost "echo ok"
+ssh tp-cd-deployment-npm "echo ok"
+ssh tp-cd-deployment-docker "echo ok"
 act -j publish-npm
 act -j publish-docker
 ```

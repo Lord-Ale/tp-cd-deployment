@@ -58,8 +58,8 @@ le fichier `.secrets` utilise par `act`.
 | Swagger | http://localhost:3000/api |
 | Verdaccio | http://localhost:4873 |
 | Docker Registry | http://localhost:5000/v2/ |
-| SSH npm target | `ssh -p 2222 deployer@localhost` |
-| SSH Docker target | `ssh -p 2223 deployer@localhost` |
+| SSH npm target | `ssh tp-cd-deployment-npm` |
+| SSH Docker target | `ssh tp-cd-deployment-docker` |
 | App npm deployee | http://localhost:3001 |
 | App Docker deployee | http://localhost:3002 |
 
@@ -68,8 +68,8 @@ Commandes de verification :
 ```bash
 curl http://localhost:4873/-/ping
 curl http://localhost:5000/v2/
-ssh -p 2222 deployer@localhost "echo ok"
-ssh -p 2223 deployer@localhost "echo ok"
+ssh tp-cd-deployment-npm "echo ok"
+ssh tp-cd-deployment-docker "echo ok"
 ```
 
 Si les relais reseau tombent apres une veille :
