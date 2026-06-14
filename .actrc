@@ -1,0 +1,5 @@
+-P ubuntu-latest=catthehacker/ubuntu:act-24.04
+--pull=false
+--network=host
+--container-options=--volume=tp-cd-deployment-act-npm:/root/.npm
+--artifact-server-path .act-artifacts

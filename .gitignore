@@ -1,0 +1,38 @@
+# Dépendances
+node_modules/
+
+# Build
+dist/
+
+# Variables d'environnement (ne jamais committer)
+.env
+
+# Base de données SQLite (générée localement)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Couverture de code
+coverage/
+
+# Cache
+.eslintcache
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# TypeScript incremental
+*.tsbuildinfo
+
+# Prisma (migrations générées localement)
+prisma/migrations/
