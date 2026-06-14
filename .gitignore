@@ -36,3 +36,5 @@ Thumbs.db
 
 # Prisma (migrations générées localement)
 prisma/migrations/
+
+.secrets

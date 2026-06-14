@@ -3,8 +3,6 @@ services:
     build:
       context: ./docker/verdaccio
     container_name: tp-cd-deployment-verdaccio
-    ports:
-      - "4873:4873"
     volumes:
       - verdaccio-storage:/verdaccio/storage
     networks:
@@ -13,8 +11,6 @@ services:
   registry:
     image: registry:2
     container_name: tp-cd-deployment-registry
-    ports:
-      - "5000:5000"
     volumes:
       - registry-storage:/var/lib/registry
     networks:
