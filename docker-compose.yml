@@ -7,6 +7,8 @@ services:
       - verdaccio-storage:/verdaccio/storage
     networks:
       - cd-network
+    ports: 
+      - 4873:4873
 
   registry:
     image: registry:2
@@ -15,6 +17,8 @@ services:
       - registry-storage:/var/lib/registry
     networks:
       - cd-network
+    ports:
+      - 5000:5000
 
   ssh-npm-target:
     build:
@@ -22,6 +26,9 @@ services:
     container_name: tp-cd-deployment-ssh-npm-target
     depends_on:
       - verdaccio
+    ports:
+      - "2222:22"
+      - "3001:3000"
     networks:
       - cd-network
 
@@ -33,6 +40,9 @@ services:
       - registry
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "2223:22"
+      - "3002:3000"
     networks:
       - cd-network
 

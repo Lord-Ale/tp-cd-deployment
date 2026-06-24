@@ -255,7 +255,82 @@ jobs:
   # - healthcheck-deployment depend des deux deploiements et verifie
   #   http://localhost:3001/health puis http://localhost:3002/health.
   # ---------------------------------------------------------------------------
+  deploy-npm:
+    name: Deploy npm
+    runs-on: ubuntu-latest
+    needs: [publish-npm]
+    if: github.ref == 'refs/heads/main'
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Calculer la version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Deployer le package npm
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: localhost
+          port: 2222
+          username: deployer
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            mkdir -p ~/app
+            CURRENT=$(node -p "require('/home/deployer/app/node_modules/tp-cd-deployment/package.json').version" 2>/dev/null || echo "")
+            echo "$CURRENT" > ~/app/.previous-npm-version
+            npm install --prefix ~/app tp-cd-deployment@${{ steps.version.outputs.version }} --registry http://verdaccio:4873 --ignore-scripts
+            pm2 delete tp-cd-deployment-npm 2>/dev/null || true
+            PORT=3000 DATABASE_URL=/home/deployer/app/dev.db pm2 start ~/app/node_modules/tp-cd-deployment/dist/src/main.js --name tp-cd-deployment-npm --update-env
+
+  deploy-docker:
+    name: Deploy Docker
+    runs-on: ubuntu-latest
+    needs: [publish-docker]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Calculer la version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Deployer l'image Docker
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: localhost
+          port: 2223
+          username: deployer
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            docker pull localhost:5000/tp-cd-deployment:${{ steps.version.outputs.version }}
+            docker rm -f tp-cd-deployment-app 2>/dev/null || true
+            docker run -d \
+              --name tp-cd-deployment-app \
+              --network container:tp-cd-deployment-ssh-docker-target \
+              -e PORT=3000 \
+              -e DATABASE_URL=/app/dev.db \
+              localhost:5000/tp-cd-deployment:${{ steps.version.outputs.version }}
+      
+  healthcheck-deployment:
+    name: Healthcheck deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-npm, deploy-docker]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Verifier le service npm
+        run: curl -f http://localhost:3001/health
+
+      - name: Verifier le service Docker
+        run: curl -f http://localhost:3002/health
   # ---------------------------------------------------------------------------
   # EXERCICE 3 : Ajouter un rollback automatique simple ici.
   # L'objectif est de revenir a la derniere version connue si le healthcheck

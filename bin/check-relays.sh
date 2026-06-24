@@ -35,8 +35,10 @@ echo "ok Verdaccio http://localhost:4873"
 curl -sf http://localhost:5000/v2/ > /dev/null
 echo "ok Docker registry http://localhost:5000/v2/"
 
-ssh -p 2222 -o StrictHostKeyChecking=no -o ConnectTimeout=3 deployer@localhost "echo ok" > /dev/null
+SSH_KEY="$HOME/.ssh/tp_cd_deployment_key"
+
+ssh -i "$SSH_KEY" -p 2222 -o StrictHostKeyChecking=no -o ConnectTimeout=3 deployer@localhost "echo ok" > /dev/null
 echo "ok SSH npm target localhost:2222"
 
-ssh -p 2223 -o StrictHostKeyChecking=no -o ConnectTimeout=3 deployer@localhost "echo ok" > /dev/null
+ssh -i "$SSH_KEY" -p 2223 -o StrictHostKeyChecking=no -o ConnectTimeout=3 deployer@localhost "echo ok" > /dev/null
 echo "ok SSH Docker target localhost:2223"
